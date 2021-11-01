@@ -24,6 +24,21 @@ local gameObject = engine.gameObject()
 local light = gameObject:addComponent(engine.light)
 light.colour:set(1.0, 0.0, 0.0, 1.0)
 ```
+
+**Requires Shader to include the following:**
+```glsl
+#define NR_POINT_LIGHTS 5
+
+struct Light {
+    float strength;
+    vec3 position;
+    vec4 colour;
+};
+
+uniform Light lights[NR_POINT_LIGHTS];
+```
+TODO: number of lights dynamically set by the engine
+
 ## Camera Frustum Culling
 Greatly improves performance by only rendering what the camera can see
 
