@@ -3,6 +3,10 @@ A 3d unity like engine made with Love2d
 
 # Features
 
+**THIS DOCUMENTATION IS INCOMPLETE AND IS JUST A QUICK OVERVIEW**  
+
+&nbsp;&nbsp;&nbsp;&nbsp;I've tried to make the code easily understandable, just look at the code
+
 ## Game Object and Components
 ```lua
 local gameObject = engine.gameObject()
