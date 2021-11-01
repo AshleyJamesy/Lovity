@@ -14,9 +14,9 @@ local meshRenderer = gameObject:addComponent(engine.meshRenderer)
 meshRenderer.mesh = mesh
 meshRenderer:addMaterial(material)
 ```
-## Models (.obj)
+## Meshes (.obj)
 ```lua
-engine.model("assets/models/obj.obj")
+engine.mesh("assets/meshes/obj.obj")
 ```
 ## Materials
 ```lua
