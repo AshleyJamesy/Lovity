@@ -1,0 +1,18 @@
+- args:
+  - mesh
+  comments: []
+  name: meshRenderer
+  notation: ':'
+  source: class
+- args:
+  - camera
+  - frustum
+  comments: []
+  name: prerender
+  notation: ':'
+  source: class
+- args: []
+  comments: []
+  name: render
+  notation: ':'
+  source: class

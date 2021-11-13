@@ -1,0 +1,19 @@
+- args: []
+  comments: []
+  name: light
+  notation: ':'
+  source: class
+- args:
+  - shader
+  - uniform
+  comments: []
+  name: send
+  notation: ':'
+  source: class
+- args:
+  - shader
+  - uniform
+  comments: []
+  name: reset
+  notation: .
+  source: class

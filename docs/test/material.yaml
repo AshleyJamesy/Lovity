@@ -1,0 +1,29 @@
+- args:
+  - shader
+  comments: []
+  name: material
+  notation: ':'
+  source: class
+- args:
+  - property
+  - value
+  comments: []
+  name: setProperty
+  notation: ':'
+  source: class
+- args:
+  - property
+  comments: []
+  name: getProperty
+  notation: ':'
+  source: class
+- args: []
+  comments: []
+  name: use
+  notation: ':'
+  source: class
+- args: []
+  comments: []
+  name: reset
+  notation: ':'
+  source: class

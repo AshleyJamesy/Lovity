@@ -1,0 +1,60 @@
+- args:
+  - tbl
+  comments: []
+  name: count
+  notation: .
+  source: table
+- args:
+  - src
+  - dst
+  comments: []
+  name: merge
+  notation: .
+  source: table
+- args:
+  - tbl
+  comments: []
+  name: readOnly
+  notation: .
+  source: table
+- args:
+  - src
+  comments: []
+  name: copy
+  notation: .
+  source: table
+- args:
+  - tbl
+  comments: []
+  name: clone
+  notation: .
+  source: table
+- args:
+  - tbl
+  - key
+  comments: []
+  name: hasKey
+  notation: .
+  source: table
+- args:
+  - tbl
+  - value
+  comments: []
+  name: hasValue
+  notation: .
+  source: table
+- args:
+  - o
+  - i
+  comments: []
+  name: tostring
+  notation: .
+  source: table
+- args:
+  - o
+  - i
+  - d
+  comments: []
+  name: dump
+  notation: .
+  source: table

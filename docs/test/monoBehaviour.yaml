@@ -1,0 +1,15 @@
+- args: []
+  comments: []
+  name: monoBehaviour
+  notation: ':'
+  source: class
+- args: []
+  comments: []
+  name: awake
+  notation: ':'
+  source: class
+- args: []
+  comments: []
+  name: start
+  notation: ':'
+  source: class

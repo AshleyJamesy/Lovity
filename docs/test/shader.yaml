@@ -1,0 +1,46 @@
+- args:
+  - code
+  comments: []
+  name: uniforms
+  notation: ''
+  source: ''
+- args: []
+  comments: []
+  name: loadAsset
+  notation: ':'
+  source: class
+- args:
+  - name
+  - '...'
+  comments: []
+  name: send
+  notation: ':'
+  source: class
+- args:
+  - name
+  - '...'
+  comments: []
+  name: sendColour
+  notation: ':'
+  source: class
+- args:
+  - name
+  comments: []
+  name: hasUniform
+  notation: ':'
+  source: class
+- args: []
+  comments: []
+  name: getUniforms
+  notation: ':'
+  source: class
+- args: []
+  comments: []
+  name: use
+  notation: ':'
+  source: class
+- args: []
+  comments: []
+  name: reset
+  notation: ':'
+  source: class

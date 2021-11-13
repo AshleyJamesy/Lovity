@@ -1,0 +1,19 @@
+{
+	"objects": [
+		{
+			"type": "engine.camera",
+			"properties": [
+				{
+					"type": "number",
+					"name": "farClip",
+					"value": 1000.0
+				},
+				{
+					"type": "number",
+					"name": "nearClip",
+					"value": 1000.0
+				}
+			]
+		}
+	]
+}

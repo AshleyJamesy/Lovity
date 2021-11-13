@@ -1,0 +1,50 @@
+- args:
+  - str
+  - delim
+  comments: []
+  name: split
+  notation: ''
+  source: ''
+- args:
+  - objects
+  comments: []
+  name: getLastElement
+  notation: ''
+  source: ''
+- args:
+  - object
+  - name
+  comments: []
+  name: group
+  notation: ''
+  source: ''
+- args:
+  - objects
+  - name
+  comments: []
+  name: object
+  notation: ''
+  source: ''
+- args:
+  - lineNum
+  - attribute
+  - args
+  comments: []
+  name: attribute
+  notation: ''
+  source: ''
+- args:
+  - lineNum
+  - attributes
+  - group
+  - face
+  comments: []
+  name: flatten
+  notation: ''
+  source: ''
+- args:
+  - path
+  comments: []
+  name: load
+  notation: ''
+  source: ''

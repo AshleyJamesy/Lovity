@@ -1,0 +1,79 @@
+- metadata:
+  - '@module math.quaternion'
+  - '@brief a quaternion class'
+- args:
+  - x
+  - y
+  - z
+  - w
+  comments:
+  - '@brief returns a new quaternion'
+  - '@param x:`number`'
+  - '@param y:`number`'
+  - '@param z:`number`'
+  - '@param w:`number`'
+  - '@return `math.quaternion`'
+  name: quaternion
+  notation: ':'
+  source: class
+- args: []
+  comments:
+  - '@brief normalises the quaternion'
+  - '@return `math.quaternion` self'
+  name: normalise
+  notation: ':'
+  source: class
+- args:
+  - matrix
+  comments:
+  - '@brief converts quaternion to matrix'
+  - '@param matrix:`math.matrix` the matrix to store the results in'
+  - '@return `math.matrix` resulting matrix provided from first argument'
+  name: toMatrix
+  notation: ':'
+  source: class
+- args:
+  - matrix
+  comments:
+  - '@brief converts matrix to quaternion and stores the results in this quaternion'
+  - '@param matrix:`math.matrix` the matrix to convert to `math.quaternion`'
+  - '@return `math.quaternion` self'
+  name: fromMatrix
+  notation: ':'
+  source: class
+- args:
+  - a
+  - b
+  - t
+  comments:
+  - '@brief interpolate between 2 quaternions given t value'
+  - '@param a:`math.quaternion` the quaternion to interpolate from'
+  - '@param b:`math.quaternion` the quaternion to interpolate to'
+  - '@param t:`number`'
+  - '@return `math.quaternion` new quaternion'
+  name: interpolate
+  notation: .
+  source: class
+- args: []
+  comments:
+  - '@brief returns a copy of the quaternion'
+  - '@return `math.quaternion` new quaternion'
+  name: clone
+  notation: ':'
+  source: class
+- args:
+  - decimals
+  comments:
+  - '@brief returns a string of the quaternion'
+  - '@param decimals:`number` the number of decimals to display, default is 2'
+  - '@return `string` "0.00, 0.00, 0.00, 1.00"'
+  name: tostring
+  notation: ':'
+  source: class
+- args: []
+  comments:
+  - '@brief returns a string of the quaternion for tostring(`math.quaternion`)'
+  - '@return `string` "0.00, 0.00, 0.00, 1.00" to 2 decimal places'
+  name: __tostring
+  notation: ':'
+  source: class

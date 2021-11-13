@@ -50,7 +50,7 @@ function class:camera()
 
 	self.fov = math.rad(45)
 	self.nearClip = 0.0
-	self.farClip = 1000
+	self.farClip = 1000.0
 
 	self.projection = math.matrix4():perspective(self.fov, g.getWidth() / g.getHeight(), self.nearClip, self.farClip)
 

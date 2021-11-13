@@ -1,0 +1,39 @@
+- args:
+  - name
+  comments: []
+  name: valid
+  notation: ''
+  source: ''
+- args:
+  - name
+  comments: []
+  name: namespaces
+  notation: ''
+  source: ''
+- args:
+  - path
+  - env
+  comments: []
+  name: load_env
+  notation: ''
+  source: ''
+- args:
+  - path
+  comments: []
+  name: script_load
+  notation: ''
+  source: ''
+- args:
+  - script
+  - env
+  comments: []
+  name: script_compile
+  notation: ''
+  source: ''
+- args:
+  - path
+  - env
+  comments: []
+  name: compile
+  notation: ''
+  source: ''

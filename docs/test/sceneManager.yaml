@@ -1,0 +1,16 @@
+- args:
+  - env
+  comments: []
+  name: onLoad
+  notation: ':'
+  source: script
+- args: []
+  comments: []
+  name: sceneManager
+  notation: ':'
+  source: class
+- args: []
+  comments: []
+  name: getActiveScene
+  notation: ':'
+  source: class

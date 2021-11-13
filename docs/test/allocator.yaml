@@ -1,0 +1,32 @@
+- args: []
+  comments: []
+  name: allocator
+  notation: ':'
+  source: class
+- args:
+  - id
+  comments: []
+  name: add
+  notation: ':'
+  source: class
+- args: []
+  comments: []
+  name: count
+  notation: ':'
+  source: class
+- args: []
+  comments: []
+  name: get
+  notation: ':'
+  source: class
+- args: []
+  comments: []
+  name: clear
+  notation: ':'
+  source: class
+- args:
+  - id
+  comments: []
+  name: remove
+  notation: ':'
+  source: class

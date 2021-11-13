@@ -1,0 +1,62 @@
+- args:
+  - frustum
+  - side
+  comments: []
+  name: normalise
+  notation: ''
+  source: ''
+- args: []
+  comments: []
+  name: frustum
+  notation: ':'
+  source: class
+- args:
+  - a
+  - projection
+  - view
+  comments: []
+  name: calculate
+  notation: .
+  source: class
+- args:
+  - frustum
+  - x
+  - y
+  - z
+  comments: []
+  name: pointInFrustum
+  notation: .
+  source: class
+- args:
+  - frustum
+  - x
+  - y
+  - z
+  - radius
+  comments: []
+  name: sphereInFrustum
+  notation: .
+  source: class
+- args:
+  - frustum
+  - x
+  - y
+  - z
+  - size
+  comments: []
+  name: cubeInFrustum
+  notation: .
+  source: class
+- args:
+  - a
+  - decimals
+  comments: []
+  name: tostring
+  notation: .
+  source: class
+- args:
+  - a
+  comments: []
+  name: __tostring
+  notation: .
+  source: class

@@ -56,15 +56,6 @@ function class:__unm()
 	return setmetatable({ x = -self.x, y = -self.y, z = self.z }, class)
 end
 
-function class:tostring(decimals)
-	local format = "%." .. tostring(decimals or 2) .. "f"
-	return string.format(format .. ", " .. format .. ", " .. format, self.x, self.y, self.z)
-end
-
-function  class.__tostring(self)
-	return self:tostring()
-end
-
 --GENERAL FUNCTIONS
 function class:set(x, y, z)
 	self.x = x or 0
@@ -81,12 +72,12 @@ function class:magnitude()
 end
 
 function class:normalised()
-	local _magnitude = self:magnitude()
+	local magnitude = self:magnitude()
 
 	return setmetatable({
-		x = math.abs(self.x) > 0 and self.x / _magnitude or 0, 
-		y = math.abs(self.y) > 0 and self.y / _magnitude or 0,
-		z = math.abs(self.z) > 0 and self.z / _magnitude or 0
+		x = math.abs(self.x) > 0 and self.x / magnitude or 0, 
+		y = math.abs(self.y) > 0 and self.y / magnitude or 0,
+		z = math.abs(self.z) > 0 and self.z / magnitude or 0
 	}, class)
 end
 
@@ -99,11 +90,11 @@ function class.cross(a, b)
 end
 
 function class:normalise()
-	local _magnitude = self:magnitude()
+	local magnitude = self:magnitude()
 
-	self.x = math.abs(self.x) > 0 and (self.x / _magnitude) or 0
-	self.y = math.abs(self.y) > 0 and (self.y / _magnitude) or 0
-	self.z = math.abs(self.z) > 0 and (self.z / _magnitude) or 0
+	self.x = math.abs(self.x) > 0 and (self.x / magnitude) or 0
+	self.y = math.abs(self.y) > 0 and (self.y / magnitude) or 0
+	self.z = math.abs(self.z) > 0 and (self.z / magnitude) or 0
 end
 
 function class.dot(a, b)
@@ -120,6 +111,15 @@ end
 
 function class:unpack()
 	return self.x, self.y, self.z
+end
+
+function class:tostring(decimals)
+	local format = "%." .. tostring(decimals or 2) .. "f"
+	return string.format(format .. ", " .. format .. ", " .. format, self.x, self.y, self.z)
+end
+
+function  class.__tostring(self)
+	return self:tostring()
 end
 
 function class:getTable()

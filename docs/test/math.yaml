@@ -1,0 +1,95 @@
+- args:
+  - value
+  - min
+  - max
+  comments: []
+  name: clamp
+  notation: .
+  source: math
+- args:
+  - value
+  - min
+  - max
+  comments: []
+  name: inrange
+  notation: .
+  source: math
+- args:
+  - n
+  - i
+  comments: []
+  name: round
+  notation: .
+  source: math
+- args:
+  - a
+  - b
+  - t
+  comments: []
+  name: lerp
+  notation: .
+  source: math
+- args:
+  - x1
+  - y1
+  - x2
+  - y2
+  comments: []
+  name: distance
+  notation: .
+  source: math
+- args:
+  - x
+  - y
+  - z
+  comments: []
+  name: magnitude
+  notation: .
+  source: math
+- args:
+  - x
+  - y
+  - z
+  comments: []
+  name: normalise
+  notation: .
+  source: math
+- args:
+  - ax
+  - ay
+  - az
+  - bx
+  - by
+  - bz
+  comments: []
+  name: cross
+  notation: .
+  source: math
+- args:
+  - ax
+  - ay
+  - az
+  - bx
+  - by
+  - bz
+  comments: []
+  name: dot
+  notation: .
+  source: math
+- args:
+  - x
+  - y
+  - angle
+  - ox
+  - oy
+  - sx
+  - sy
+  comments: []
+  name: transform
+  notation: .
+  source: math
+- args: []
+  comments: []
+  name: uuid
+  notation: .
+  source: math

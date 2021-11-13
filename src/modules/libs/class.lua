@@ -103,7 +103,7 @@ local function script_load(path)
 
 			for _, script in pairs(scripts) do
 				if path == script.path then
-					error(path .. " - " .. "compile error: <" .. script.class.name .. "> already loaded", 5)
+					error(path .. " - " .. "compile error: <" .. script.class.name .. "> already loaded", -1)
 				end
 			end
 
@@ -118,7 +118,7 @@ local function script_load(path)
 			local status, err = load_env(path, env)
 
 			if status ~= 0 then
-				error(path .. " - " .. err, 5)
+				error(path .. " - " .. err, -1)
 			end
 
 			local class = env.class
@@ -127,14 +127,14 @@ local function script_load(path)
 				local status, err = valid(class.name)
 
 				if not status then
-					error(path .. " - " .. "compile error: class name " .. err, 5)
+					error(path .. " - " .. "compile error: class name " .. err, -1)
 				end
 
 				if scripts[class.name] then
-					error(path .. " - " .. "compile error: <" .. class.name .. "> already exists at: " .. scripts[class.name].path, 5)
+					error(path .. " - " .. "compile error: <" .. class.name .. "> already exists at: " .. scripts[class.name].path, -1)
 				end
 			else
-				error(path .. " - " .. "compile error: missing class name", 5)
+				error(path .. " - " .. "compile error: missing class name", -1)
 			end
 
 			local spaces, className = namespaces(class.name)
@@ -143,22 +143,22 @@ local function script_load(path)
 			if class.base == nil then
 				if type(class[className]) ~= "function" then
 					if type(class[className]) == "nil" then
-						error(path .. " - " .. "compile error: <" .. class.name .. "> missing constructor", 5)
+						error(path .. " - " .. "compile error: <" .. class.name .. "> missing constructor", -1)
 					end
 
-					error(path .. " - " .. "compile error: <" .. class.name .. "> constructor must be function", 5)
+					error(path .. " - " .. "compile error: <" .. class.name .. "> constructor must be function", -1)
 				end
 
 				if type(class.init) ~= "function" then
 					if type(class.init) ~= "nil" then
-						error(path .. " - " .. "compile error: <" .. class.name .. "> 'init' constructor must be function", 5)
+						error(path .. " - " .. "compile error: <" .. class.name .. "> 'init' constructor must be function", -1)
 					end
 				end
 			else
 				local status, err = valid(class.base)
 
 				if not status then
-					error(path .. " - " .. "compile error: base class name " .. err, 5)
+					error(path .. " - " .. "compile error: base class name " .. err, -1)
 				end
 			end
 
@@ -257,7 +257,7 @@ local function script_compile(script, env)
 					table.insert(script.types, type)
 				end
 			else
-				error(script.path .. " - compile error: <" .. script.basename .. "> unresolved class", 5)
+				error(script.path .. " - compile error: <" .. script.basename .. "> unresolved class", -1)
 			end
 		end
 
@@ -271,7 +271,7 @@ local function script_compile(script, env)
 				end
 
 				if type(lib[namespace]) ~= "table" then
-					error(script.path .. " - compile error: <" .. script.classname .. "> unable to compile to namespace<".. k .. ":" .. namespace .. ">' is not of type table", 5)
+					error(script.path .. " - compile error: <" .. script.classname .. "> unable to compile to namespace<".. k .. ":" .. namespace .. ">' is not of type table", -1)
 				end
 
 				lib = lib[namespace]
@@ -285,7 +285,7 @@ end
 
 local function compile(path, env)
 	if type(env) ~= "table" then
-		error("environment not provided", 2)
+		error("environment not provided", -1)
 	end
 
 	local info = love.filesystem.getInfo(path)

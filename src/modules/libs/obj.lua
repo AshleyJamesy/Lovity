@@ -16,86 +16,142 @@ local function split(str, delim)
 	return t
 end
 
---TODO: multiple faces
-local function load(path, format)
+local function getLastElement(objects)
+	return objects[#objects]
+end
+
+local function group(object, name)
+	table.insert(object.groups, { name = name, format = {}, vertices = {}, indices = {}, extent = { 0, 0, 0 } })
+end
+
+local function object(objects, name)
+	local object = { name = name, groups = {} }
+
+	group(object, "")
+
+	table.insert(objects, object)
+end
+
+local function attribute(lineNum, attribute, args)
+	local values = {}
+
+	for i = 1, attribute.components do
+		local component = args[i + 1]
+
+		if component == nil then
+			error("float component #" .. i .. " at line: " .. lineNum .. " is missing")
+		else
+			if not component:match("^-*[0-9]*%.*[0-9]*$") then
+				error("float component #" .. i .. " at line: " .. lineNum .. " is not a valid number")
+			else
+				table.insert(values, tonumber(component))
+			end
+		end
+	end
+
+	table.insert(attribute.elements, values)
+end
+
+local function flatten(lineNum, attributes, group, face)
+	local vertex = {}
+
+	for k, index in pairs(split(face, "/")) do
+		if index ~= "" then
+			local attribute = attributes[k]
+			local element = attribute.elements[tonumber(index)]
+
+			if element ~= nil then
+				for i = 1, attribute.components do
+					table.insert(vertex, element[i])
+				end
+			else
+				error("face '" .. face .. "' at line " .. lineNum .. " tried to index missing attribute " .. attribute.tag .. "[" .. index .. "]", 4)
+			end
+		end
+	end
+
+	table.insert(group.vertices, vertex)
+end
+
+local function load(path)
 	local info = love.filesystem.getInfo(path)
 
 	if info then
 		if info.type == "file" then
-			local contents = love.filesystem.read(path):gsub('\r\n', '\n')
+			local objects = {}; object(objects, "")
 
-			local v = {}
-			local t = {}
-			local n = {}
-			local f = {}
+			local attributes = {
+				{
+					name = "VertexPosition",
+					tag = "v",
+					datatype = "float",
+					components = 3,
+					elements = {}
+				},
+				{
+					name = "VertexTexCoord",
+					tag = "vt",
+					datatype = "float",
+					components = 2,
+					elements = {}
+				},
+				{
+					name = "VertexNormal",
+					tag = "vn",
+					datatype = "float",
+					components = 3,
+					elements = {}
+				}
+			}
 
-			local vertices = {}
-
-			local lines = split(contents, '\n')
-
-			for _, line in pairs(lines) do
-				local args = split(line, "%s+")
-
-				if args[1] == "v" then
-					table.insert(v, {
-						x = tonumber(args[2]),
-						y = tonumber(args[3]),
-						z = tonumber(args[4])
-					})
-				elseif args[1] == "vt" then
-					table.insert(t, {
-						x = tonumber(args[2]),
-						y = tonumber(args[3])
-					})
-				elseif args[1] == "vn" then
-					table.insert(n, {
-						x = tonumber(args[2]),
-						y = tonumber(args[3]),
-						z = tonumber(args[4])
-					})
-				elseif args[1] == "f" then
-					local faceA = split(args[2], "/")
-					local faceB = split(args[3], "/")
-					local faceC = split(args[4], "/")
-
-					table.insert(f, faceA)
-					table.insert(f, faceB)
-					table.insert(f, faceC)
-
-					if args[5] ~= nil then
-						local faceD = split(args[5], "/")
-
-						table.insert(f, faceA)
-						table.insert(f, faceC)
-						table.insert(f, faceD)
-					end
-				end
-			end
-
-			for _, face in pairs(f) do
-				local vertex = {}
-
-				for k, attribute in pairs(format) do
-					if attribute[1] == "VertexPosition" then
-						table.insert(vertex, v[tonumber(face[1])].x)
-						table.insert(vertex, v[tonumber(face[1])].y)
-						table.insert(vertex, v[tonumber(face[1])].z)
-					elseif attribute[1] == "VertexTexCoord" then
-						table.insert(vertex, t[tonumber(face[2])].x)
-						table.insert(vertex, t[tonumber(face[2])].y)
-					elseif attribute[1] == "VertexNormal" then
-						table.insert(vertex, n[tonumber(face[3])].x)
-						table.insert(vertex, n[tonumber(face[3])].y)
-						table.insert(vertex, n[tonumber(face[3])].z)
-					end
+			local lineNum, contents = 1, love.filesystem.read(path)
+			for line in (contents .. (contents:sub(-1) ~= "\n" and "\n" or "")):gmatch("(.-)\n") do
+				local args = {}
+				for arg in line:gmatch("[^%s]+") do
+					table.insert(args, arg)
 				end
 
-				table.insert(vertices, vertex)
+				local keyword = args[1]
+
+				if keyword ~= nil then
+					if keyword == "o" then
+						local name = args[2] or ""
+
+						if name ~= "" then
+							object(objects, name)
+						end
+					elseif keyword == "g" then
+						local o = getLastElement(objects)
+
+						local name = args[2] or ""
+						if name ~= "" then
+							group(o, name)
+						end
+					elseif keyword == "v" then
+						attribute(lineNum, attributes[1], args)
+					elseif keyword == "vt" then
+						attribute(lineNum, attributes[2], args)
+					elseif keyword == "vn" then
+						attribute(lineNum, attributes[3], args)
+					elseif keyword == "f" then
+						local o = getLastElement(objects)
+						local g = getLastElement(o.groups)
+
+						for i = 3, #args do
+							flatten(lineNum, attributes, g, args[    2])
+							flatten(lineNum, attributes, g, args[i - 1])
+							flatten(lineNum, attributes, g, args[i - 0])
+						end
+					end
+				end
+
+				lineNum = lineNum + 1
 			end
 
-			return vertices
+			return objects
 		end
 	end
+	
 end
 
 return {

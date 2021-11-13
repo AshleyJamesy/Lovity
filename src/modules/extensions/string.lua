@@ -106,16 +106,6 @@ function string.SetChar(s, i, r)
 	return s:sub(1, i - 1) .. r .. s:sub(i + 1)
 end
 
-function string.Split(s, d)
-	local t = {}
-	
-	for word in s:gmatch("(.-)" .. d) do 
-		table.insert(t, #t + 1, word)
-	end
-
-	return t
-end
-
 function string.StartsWith(s, e)
 	return s:sub(1, #e) == e
 end

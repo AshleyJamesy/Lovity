@@ -22,6 +22,7 @@ varying vec3 Normal;
     uniform Image iAlbedo;
     uniform Image iMettalic;
     uniform Image iRoughness;
+    uniform Image iEmission;
     uniform Image iNormal;
 
     void effect() {
@@ -30,14 +31,15 @@ varying vec3 Normal;
 
         vec3 Colour = Texel(iAlbedo, _UV).rgb * VaryingColor.rgb;
 
-        vec3 PBR;
+        vec4 PBR;
         PBR.r = Texel(iMettalic, _UV).r;
         PBR.g = Texel(iRoughness, _UV).r;
-        PBR.b = 1.0;
+        PBR.b = Texel(iEmission, _UV).r;
+        PBR.a = 1.0f;
 
         love_Canvases[0] = vec4(FragPos, 1.0);
         love_Canvases[1] = vec4(Normal, 1.0);
         love_Canvases[2] = vec4(Colour, 1.0);
-        love_Canvases[3] = vec4(PBR, 1.0);
+        love_Canvases[3] = PBR;
     }
 #endif

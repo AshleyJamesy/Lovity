@@ -25,10 +25,8 @@ function class:transform()
 	table.insert(self.gameObject.scene.roots, self)
 end
 
-local matrix, scale, rotation, position
-
 function class:update()
-	scale, rotation, position = self.scale, self.rotation, self.position
+	local scale, rotation, position = self.scale, self.rotation, self.position
 
 	self.matrix:transform(scale.x, scale.y, scale.z, position.x, position.y, position.z, rotation.x, rotation.y, rotation.z)
 
@@ -40,9 +38,9 @@ function class:update()
 
 	self.globalPosition:set(matrix:getPosition())
 
-	self.left:set(matrix:getLeft())
 	self.up:set(matrix:getUp())
 	self.forward:set(matrix:getForward())
+	self.left:set(matrix:getLeft())
 
 	self.matrixInverse = self.matrixInverse:copy(self.matrix):inverse():transpose()
 

@@ -1,0 +1,17 @@
+- args:
+  - env
+  - classes
+  comments: []
+  name: onLoad
+  notation: ':'
+  source: script
+- args: []
+  comments: []
+  name: camera
+  notation: ':'
+  source: class
+- args: []
+  comments: []
+  name: render
+  notation: ':'
+  source: class

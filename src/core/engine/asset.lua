@@ -4,9 +4,9 @@ class.assetType = "assset"
 function class:asset(path)
 	assert(path ~= nil, "cannot load nil asset")
 
-	self.path 		= path
-	self.meta 		= path .. "." .. "meta"
-	self.uuid 		= math.uuid()
+	self.path = path
+	self.meta = path .. "." .. "meta"
+	self.uuid = math.uuid()
 
 	local info = love.filesystem.getInfo(self.path)
 	if info then
@@ -36,6 +36,9 @@ function class:asset(path)
 	else
 		print("attempted to load asset '" .. path .. "' failed")
 	end
+end
+
+function class:default()
 end
 
 function class:save()

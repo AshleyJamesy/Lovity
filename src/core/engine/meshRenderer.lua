@@ -15,15 +15,22 @@ function class:prerender(camera, frustum)
 
 	if mesh then
 		local scale, position = self.transform.scale, self.transform.globalPosition
+		local radius = mesh.extent:magnitude() * math.max(math.max(scale.x, scale.y), scale.z)
 
-		return frustum:sphereInFrustum(position.x, position.y, position.z, mesh.extent:magnitude() * math.max(math.max(scale.x, scale.y), scale.z))
+		return frustum:sphereInFrustum(position.x, position.y, position.z, radius)
 	end
 
 	return false
 end
 
 function class:render()
+	local meshes = self.mesh.meshes
+
 	graphics.setColor(self.colour)
-	graphics.draw(self.mesh.source)
+
+	for k, mesh in pairs(meshes) do
+		graphics.draw(mesh)
+	end
+
 	graphics.setColor(1.0, 1.0, 1.0, 1.0)
 end
