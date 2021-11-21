@@ -27,11 +27,11 @@ function script:onLoad(env, classes)
 end
 
 function class:scene(name)
-	self.name 		= name
-	self.allocator 	= allocator()
-	self.queue 		= {}
-	self.objects 	= {}
-	self.roots 		= {}
+	self.name = name
+	self.allocator = allocator()
+	self.queue = {}
+	self.objects = {}
+	self.roots = {}
 end
 
 function class:callFunctionOnType(list, typename, method, ...)
@@ -54,9 +54,13 @@ function class:callFunctionOnType(list, typename, method, ...)
 			end
 
 			if component.enabled == nil or component.enabled == true then
+				--BUILD
+				--pcall(f, component, ...)
+
+				--EDITOR
 				status, err = pcall(f, component, ...)
 				if not status then
-					print(ansicolour.option.reset .. ansicolour.option.bright .. ansicolour.colour.red .. err .. ansicolour.option.reset)
+					print(ansicolour.option.reset .. ansicolour.option.bright .. ansicolour.colour.red .. typename .. ": " .. method .. " - " .. err .. ansicolour.option.reset)
 				end
 			end
 
@@ -78,16 +82,30 @@ function class:callFunctionOnAll(list, method, ignore, ...)
 	end
 end
 
+local function search(obj)
+	return obj.instanceId
+end
+
+--TODO: remove status, err for build
+--no need to pcall if not debugging
 function class:update(dt)
+	input:update()
+
 	if #self.queue > 0 then
 		--awake
 		local status, err
 		for _, component in pairs(self.queue) do
 			if type(component.awake) == "function" then
-				status, err = pcall(component.awake, component)
-				if not status then
-					print(ansicolour.option.reset .. ansicolour.option.bright .. ansicolour.colour.red .. err .. ansicolour.option.reset)
-				end
+				--BUILD
+				pcall(component.awake, component)
+
+				--EDITOR
+				--[[
+					status, err = pcall(component.awake, component)
+					if not status then
+						print(ansicolour.option.reset .. ansicolour.option.bright .. ansicolour.colour.red .. err .. ansicolour.option.reset)
+					end
+				]]
 			end
 		end
 
@@ -95,10 +113,16 @@ function class:update(dt)
 		local status, err
 		for _, component in pairs(self.queue) do
 			if type(component.enable) == "function" then
-				status, err = pcall(component.enable, component)
-				if not status then
-					print(ansicolour.option.reset .. ansicolour.option.bright .. ansicolour.colour.red .. err .. ansicolour.option.reset)
-				end
+				--BUILD
+				pcall(component.enable, component)
+
+				--EDITOR
+				--[[
+					status, err = pcall(component.enable, component)
+					if not status then
+						print(ansicolour.option.reset .. ansicolour.option.bright .. ansicolour.colour.red .. err .. ansicolour.option.reset)
+					end
+				]]
 			end
 		end
 
@@ -106,10 +130,16 @@ function class:update(dt)
 		local status, err
 		for _, component in pairs(self.queue) do
 			if type(component.start) == "function" then
-				status, err = pcall(component.start, component)
-				if not status then
-					print(ansicolour.option.reset .. ansicolour.option.bright .. ansicolour.colour.red .. err .. ansicolour.option.reset)
-				end
+				--BUILD
+				pcall(component.start, component)
+
+				--EDITOR
+				--[[
+					status, err = pcall(component.start, component)
+					if not status then
+						print(ansicolour.option.reset .. ansicolour.option.bright .. ansicolour.colour.red .. err .. ansicolour.option.reset)
+					end
+				]]
 			end
 		end
 
@@ -117,11 +147,15 @@ function class:update(dt)
 			local component = table.remove(self.queue, #self.queue)
 			local name = component:type()
 
-			if self.objects[name] == nil then
-				self.objects[name] = {}
+			local objects = self.objects[name]
+
+			if objects == nil then
+				objects = {}; self.objects[name] = objects
 			end
 
-			table.insert(self.objects[name], #self.objects[name] + 1, component)
+			--store in order of instanceId for quicker reference when removing
+			local _, index = table.binarySearch(objects, component, search)
+			table.insert(objects, index + 1, component)
 		end
 	end
 
@@ -139,6 +173,8 @@ function class:update(dt)
 	for _, type in pairs(updaters) do
 		self:callFunctionOnType(self.objects, type, "lateupdate")
 	end
+
+	input:lateupdate()
 end
 
 function class:render()

@@ -4,6 +4,38 @@ local mt_script = {
 	__index = _G, __newindex = _G
 }
 
+local mt_class = {
+	__call = function(t, ...)
+		if t.init then
+			return t.init(t, ...)
+		end
+
+		local o = setmetatable({}, t)
+		o[t:typename()](o, ...)
+
+		return o
+	end
+}
+
+local __type = type
+
+--[[
+function type(a)
+	if __type(a) == "table" then
+		local mt = getmetatable(a)
+		if mt ~= nil and mt == mt_class or getmetatable(mt) == mt_class then
+			return a:type()
+		end
+	end
+
+	return __type(a)
+end
+]]
+
+function typeis(a, b)
+	return (__type(a) == "table" and __type(b) == "table") and getmetatable(a) == b or __type(a) == b
+end
+
 local function valid(name)
 	if type(name) == "string" then
 		if not string.match(name, "^[a-zA-Z.]+[0-9]*$") then
@@ -161,19 +193,6 @@ local function script_load(path)
 					error(path .. " - " .. "compile error: base class name " .. err, -1)
 				end
 			end
-
-			local mt_class = {
-				__call = function(t, ...)
-					if t.init then
-						return t.init(t, ...)
-					end
-
-					local o = setmetatable({}, t)
-					o[className](o, ...)
-
-					return o
-				end
-			}
 
 			setmetatable(class, mt_class)
 

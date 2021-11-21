@@ -25,6 +25,7 @@ function class:loadAsset()
 	local tmp = math.vector3()
 
 	self.extent = math.vector3()
+	self.extentMagnitude = 0.0
 
 	self.meshes = {}
 	for k, object in pairs(objects) do
@@ -33,8 +34,10 @@ function class:loadAsset()
 				for j, vertex in pairs(group.vertices) do
 					tmp:set(vertex[1], vertex[2], vertex[3])
 
-					if tmp:magnitude() > self.extent:magnitude() then
+					local mag = tmp:magnitude()
+					if mag > self.extentMagnitude then
 						self.extent:set(tmp.x, tmp.y, tmp.z)
+						self.extentMagnitude = mag
 					end
 				end
 

@@ -20,31 +20,31 @@ if argv["-server"] then
 end
 
 if argv["-dedicated"] then
-	CLIENT 		= false
-	SERVER 		= true
-	DEDICATED 	= true
+	CLIENT = false
+	SERVER = true
+	DEDICATED = true
 end
 
 function love.conf(t)
 	t.title 	= "Engine"
 	t.version 	= "11.3"
 
-	t.modules.audio 		= not DEDICATED
-	t.modules.event 		= true
-	t.modules.graphics 		= not DEDICATED
-	t.modules.image 		= not DEDICATED
-	t.modules.joystick 		= not DEDICATED
-	t.modules.keyboard 		= true
-	t.modules.math 			= true
-	t.modules.mouse 		= true
-	t.modules.physics 		= true
-	t.modules.sound 		= not DEDICATED
-	t.modules.system 		= true
-	t.modules.timer 		= true
-	t.modules.touch 		= not DEDICATED
-	t.modules.video 		= not DEDICATED
-	t.modules.window 		= not DEDICATED
-	t.modules.thread 		= true
+	t.modules.audio = not DEDICATED
+	t.modules.event = true
+	t.modules.graphics = not DEDICATED
+	t.modules.image = not DEDICATED
+	t.modules.joystick = not DEDICATED
+	t.modules.keyboard = true
+	t.modules.math = true
+	t.modules.mouse = true
+	t.modules.physics = true
+	t.modules.sound = not DEDICATED
+	t.modules.system = true
+	t.modules.timer = true
+	t.modules.touch = not DEDICATED
+	t.modules.video = not DEDICATED
+	t.modules.window = not DEDICATED
+	t.modules.thread = true
 
 	if not DEDICATED then
 		--t.window.icon = "?"
@@ -77,6 +77,8 @@ function love.conf(t)
 		t.window.usedpiscale = true 			-- Enable automatic DPI scaling when highdpi is set to true as well (boolean)
 		t.window.x = nil 						-- The x-coordinate of the window's position in the specified display (number)
 		t.window.y = nil 						-- The y-coordinate of the window's position in the specified display (number)
+	else
+		require("love.system")
 	end
 
 	require("src.modules.init")

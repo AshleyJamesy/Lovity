@@ -5,13 +5,7 @@ love.mouse.setRelativeMode(true)
 local sceneManager = engine.sceneManagement.sceneManager
 
 function love.load()
-	myscene:createTestScene()
-end
-
-function love.keypressed(key, scancode, isrepeat)
-	if key == "escape" then
-		love.event.quit()
-	end
+	scene:createTestScene()
 end
 
 function love.fixedupdate(dt)
@@ -35,44 +29,37 @@ function love.render()
 	--STATISTICS
 	local stats = {
 		{
+			name = "Memory",
+			value = string.format("%.2f Mb", collectgarbage("count") / (1024))
+		},
+		{
+			name = "VRAM",
+			value = string.format("%.2f Mb", love.graphics.getStats().texturememory / (1024 ^ 2))
+		},
+		{
 			name = "FPS",
 			value = love.timer.getFPS(),
-			tabs = 1
 		}
 	}
 
 	if engine.camera.main then
-		if scene.objects["engine.meshRenderer"] then
-			table.insert(stats, {
-				name = "Objects",
-				value = #scene.objects["engine.meshRenderer"],
-				tabs = 1,
-			})
+		table.insert(stats, {
+			name = "Objects",
+			value = scene.objects["engine.meshRenderer"] ~= nil and #scene.objects["engine.meshRenderer"] or 0,
+		})
 
-			table.insert(stats, {
-				name = "Rendering",
-				value = engine.camera.main.stats.rendering .. " / " .. #scene.objects["engine.meshRenderer"],
-				tabs = 1
-			})
-		else
-			table.insert(stats, {
-				name = "Objects",
-				value = 0,
-				tabs = 1,
-			})
-
-			table.insert(stats, {
-				name = "Rendering",
-				value = "0 / 0",
-				tabs = 1
-			})
-		end
+		table.insert(stats, {
+			name = "Rendering",
+			value = engine.camera.main.stats.rendering .. " / " .. (scene.objects["engine.meshRenderer"] ~= nil and #scene.objects["engine.meshRenderer"] or 0),
+		})
 	end
 
-	local s = ""
+	local keys, values = "", ""
 	for k, stat in pairs(stats) do
-		s = s .. stat.name .. ":" .. string.rep("\t", stat.tabs or 1) .. tostring(stat.value) .. "\n"
+		keys = keys .. stat.name .. ":\n"
+		values = values .. string.rep("\t", stat.tabs or 5) .. tostring(stat.value) .. "\n"
 	end
 
-	love.graphics.print(s, 25, 25)
+	love.graphics.print(keys, 25, 25)
+	love.graphics.print(values, 25, 25)
 end

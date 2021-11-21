@@ -2,6 +2,8 @@ class.name = "engine.light"
 class.base = "engine.behaviour"
 
 function class:light()
+	class.base.behaviour(self)
+
 	self.colour = engine.colour()
 	self.strength = 2.0
 end

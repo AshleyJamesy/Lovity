@@ -19,3 +19,7 @@ function class:object()
 	self.instanceId = id
 	self.name = self:type()
 end
+
+function class.destroy(object)
+	print(object.scene)
+end

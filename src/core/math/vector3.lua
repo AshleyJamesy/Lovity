@@ -15,40 +15,40 @@ end
 
 function class.__add(a, b)
 	if type(b) == "number" then
-		--Vector3 + float
+		--vector3 + float
 		return setmetatable({ x = a.x + b, y = a.y + b, z = a.z + b }, class)
 	elseif type(a) == "number" then
-		--float + Vector3
+		--float + vector3
 		return setmetatable({ x = b.x + a, y = b.y + a, z = b.z + a }, class)
 	end
 
-	--Vector3 + Vector3
+	--vector3 + vector3
 	return setmetatable({ x = (a.x or 0) + (b.x or 0), y = (a.y or 0) + (b.y or 0), z = (a.z or 0) + (b.z or 0) }, class)
 end
 
 function class.__sub(a, b)
 	if type(b) == "number" then
-		--Vector3 - float
+		--vector3 - float
 		return setmetatable({ x = a.x - b, y = a.y - b, z = a.z - b }, class)
 	elseif type(a) == "number" then
-		--float - Vector3
+		--float - vector3
 		return setmetatable({ x = b.x - a, y = b.y - a, z = b.z - a }, class)
 	end
 
-	--Vector3 - Vector3
+	--vector3 - vector3
 	return setmetatable({ x = (a.x or 0) - (b.x or 0), y = (a.y or 0) - (b.y or 0), z = (a.z or 0) - (b.z or 0) }, class)
 end
 
 function class.__mul(a, b)
 	if type(b) == "number" then
-		--Vector3 * float
+		--vector3 * float
 		return setmetatable({ x = a.x * b, y = a.y * b, z = a.z * b }, class)
 	elseif type(a) == "number" then
-		--float * Vector3
+		--float * vector3
 		return setmetatable({ x = b.x * a, y = b.y * a, z = b.z * a }, class)
 	end
 
-	--Vector3 * Vector3
+	--vector3 * vector3
 	return setmetatable({ x = a.x * b.x, y = a.y * b.y, z = a.z * b.z }, class)
 end
 
@@ -101,7 +101,7 @@ function class.dot(a, b)
 	return a.x * b.x + a.y * b.y + a.z * b.z
 end
 
-function class.inRange(a, b, c)
+function class.range(a, b, c)
 	return a.x >= b.x and a.x <= c.x and a.y >= b.y and a.y <= c.y and a.z >= b.z and a.z <= c.z
 end
 

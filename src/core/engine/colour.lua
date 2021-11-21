@@ -57,10 +57,10 @@ function class.__mul(a,b)
 end
 
 function class:set(r, g, b, a)
-	self[1] = math.clamp(r, 0, 1)
-	self[2] = math.clamp(g, 0, 1)
-	self[3] = math.clamp(b, 0, 1)
-	self[4] = math.clamp(a, 0, 1)
+	self[1] = math.clamp(r or 0.0, 0, 1)
+	self[2] = math.clamp(g or 0.0, 0, 1)
+	self[3] = math.clamp(b or 0.0, 0, 1)
+	self[4] = math.clamp(a or 0.0, 0, 1)
 	
 	return self
 end

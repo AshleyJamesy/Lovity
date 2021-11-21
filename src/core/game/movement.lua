@@ -8,33 +8,41 @@ end
 function class:update(dt)
 	local speed = 10.0
 
-	if love.keyboard.isDown("lshift") then
+	if input:getKeyDown("escape") then
+		love.event.quit()
+	end
+
+	if input:getKey("lshift") then
 		speed = 50.0
-	elseif love.keyboard.isDown("lctrl") then
+	elseif input:getKey("lctrl") then
 		speed = 1.0
 	end
 
-	if love.keyboard.isDown("w") then
+	if input:getKey("w") then
 		self.transform.position = self.transform.position + self.transform.forward * dt * speed
 	end
 
-	if love.keyboard.isDown("a") then
-		self.transform.position = self.transform.position + self.transform.left * dt * speed
+	if input:getKey("a") then
+		self.transform.position = self.transform.position - self.transform.right * dt * speed
 	end
 
-	if love.keyboard.isDown("d") then
-		self.transform.position = self.transform.position - self.transform.left * dt * speed
+	if input:getKey("d") then
+		self.transform.position = self.transform.position + self.transform.right * dt * speed
 	end
 
-	if love.keyboard.isDown("s") then
+	if input:getKey("s") then
 		self.transform.position = self.transform.position - self.transform.forward  * dt * speed
 	end
 
-	if love.keyboard.isDown("space") then
+	if input:getKey("space") then
 		self.transform.position = self.transform.position + math.vector3(0, 1, 0) * dt * speed
 	end
 
-	if love.keyboard.isDown("c") then
+	if input:getKey("c") then
 		self.transform.position = self.transform.position - math.vector3(0, 1, 0) * dt * speed
+	end
+
+	if input:getKeyDown("g") then
+		collectgarbage()
 	end
 end

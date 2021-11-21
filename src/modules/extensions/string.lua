@@ -20,7 +20,7 @@ function string.Explode(s, d, p)
 	local t = {}
 	
 	for word in (s .. d):gmatch(p == true and d or ("(.-)" .. d)) do
-		table.insert(t, #t + 1, word)
+		table.insert(t, word)
 	end
 
 	return t

@@ -21,6 +21,10 @@ function class:gameObject()
 	self.transform = self:getComponent(transform)
 end
 
+local function search(obj)
+	return obj.instanceId
+end
+
 function class:addComponent(c, ...)
 	if c then
 		if c:typeof(component:type()) then
@@ -29,12 +33,23 @@ function class:addComponent(c, ...)
 			instance.gameObject = self
 			instance.transform  = self.transform
 
+			--calls the constructor for class
 			c[c:typename()](instance, ...)
 
+			--prepare component for scene initialisation
 			local scene = sceneManager:getActiveScene()
-			table.insert(scene.queue, #scene.queue + 1, instance)
+			table.insert(scene.queue, instance)
 
-			table.insert(self.components, 1, instance)
+			--add component to gameObject for quicker reference
+			local components = self.components[c:type()]
+
+			if components == nil then
+				components = {}; self.components[c:type()] = components
+			end
+
+			--store in order of instanceId for quicker reference when removing
+			local obj, index = table.binarySearch(components, instance, search)
+			table.insert(components, index + 1, table.reference(instance))
 
 			return instance
 		end
@@ -44,10 +59,9 @@ end
 function class:getComponent(c)
 	if c then
 		if c:typeof(component:type()) then
-			for i = 1, #self.components do
-				if self.components[i]:type() == c:type() then
-					return self.components[i]
-				end
+			local components = self.components[c:type()]
+			if components ~= nil then
+				return components[1]
 			end
 		end
 	end
@@ -55,16 +69,15 @@ function class:getComponent(c)
 	return nil
 end
 
-function class:getComponents(component)
-	if component then
-		if typeof(component, "Component") then
-			for i = 1, #self.components do
-				if typeof(self.components[i], type(component)) then
-					t[#t + 1] = self.components[i]
-				end
+function class:getComponents(c)
+	if c then
+		if c:typeof(component:type()) then
+			local components = self.components[c:type()]
+			if components ~= nil then
+				return table.clone(components)
 			end
+
+			return {}
 		end
 	end
-	
-	return t
 end

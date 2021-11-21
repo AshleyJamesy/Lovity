@@ -20,7 +20,7 @@ function class:add(id)
 		end
 	end
 
-	table.insert(used, #used + 1, id)
+	table.insert(used, id)
 
 	return id
 end
@@ -41,7 +41,7 @@ end
 
 function class:clear()
 	for i = 1, #used do
-		table.insert(free, #free + 1, table.remove(used, 1))
+		table.insert(free, table.remove(used, 1))
 	end
 end
 

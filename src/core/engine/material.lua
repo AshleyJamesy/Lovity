@@ -1,23 +1,18 @@
 class.name = "engine.material"
 
-local exclude = {
-	"projection",
-	"view",
-	"model",
-	"modelInverse"
-}
+local graphics = love.graphics
 
 function class:material(shader)
 	self.shader = shader
 	self.wireframe = false
+	self.depthMode = "lequal"
+	self.meshCullMode = "back"
 	self.properties = {}
 end
 
 function class:setProperty(property, value)
 	if self.shader:hasUniform(property:match("([A-Za-z0-9_]+)")) then
-		if not table.hasValue(exclude, property:match("([A-Za-z0-9_]+)")) then
-			self.properties[property] = value
-		end
+		self.properties[property] = value
 	end
 end
 
@@ -26,27 +21,33 @@ function class:getProperty(property)
 end
 
 function class:use()
-	if self.shader then
+	local shader = self.shader
+
+	if shader then
 		local properties = self.properties
 
-		for name, property in pairs(self.shader:getUniforms()) do
-			if not table.hasValue(exclude, name) then
-				if properties[name] ~= nil then
-					self.shader:send(name, properties[name])
-				end
+		for name, property in pairs(shader:getUniforms()) do
+			if properties[name] ~= nil then
+				shader:send(name, properties[name])
 			end
 		end
 
-		self.shader:use()
+		shader:use()
 
-		if self.wireframe ~= love.graphics.isWireframe() then
-			love.graphics.setWireframe(self.wireframe)
+		if self.wireframe ~= graphics.isWireframe() then
+			graphics.setWireframe(self.wireframe)
+		end
+
+		if self.depthMode ~= graphics.getDepthMode() then
+			graphics.setDepthMode(self.depthMode, true)
+		end
+
+		if self.meshCullMode ~= graphics.getMeshCullMode() then
+			graphics.setMeshCullMode(self.meshCullMode)
 		end
 	end
 end
 
 function class:reset()
-	if self.wireframe or love.graphics.isWireframe() then
-		love.graphics.setWireframe(false)
-	end
+	graphics.setColor(1.0, 1.0, 1.0, 1.0)
 end

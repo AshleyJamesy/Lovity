@@ -49,7 +49,7 @@ function class:camera()
 	}
 
 	self.fov = math.rad(45)
-	self.nearClip = 0.0
+	self.nearClip = 0.1
 	self.farClip = 1000.0
 
 	self.projection = math.matrix4():perspective(self.fov, g.getWidth() / g.getHeight(), self.nearClip, self.farClip)
@@ -75,23 +75,43 @@ end
 function class:render()
 	local scene = self.scene
 
-	local projection = self.projection:perspective(self.fov, g.getWidth() / g.getHeight(), self.nearClip, self.farClip)
+	local projection = self.projection:perspective(self.fov, g.getWidth() / g.getHeight(), math.max(self.nearClip, 0.1),  math.max(self.farClip, 0.1))
 
-	--TODO: view rotation
-	local view = self.view:set(
-		1, 0, 0, -self.transform.globalPosition.x,
-		0, 1, 0, -self.transform.globalPosition.y,
-		0, 0, 1, -self.transform.globalPosition.z,
-		0, 0, 0, 1
-	)
+	local view = self.transform.matrixInverse
+	local frustum = self.frustum:calculate(projection, view)
 
-	local frustum = self.frustum
-	frustum:calculate(projection, view)
+	local properties = {
+		{ 
+			name = "projection",
+			value = projection
+		},
+		{ 
+			name = "view",
+			value = view },
+		{ 
+			name = "viewPosition",
+			value = self.transform.globalPosition:getTable()
+		}
+	}
+
+	--TODO: get closest lights to camera
+	local lights = {}
+	if scene.objects["engine.light"] ~= nil then
+		for k, light in pairs(scene.objects["engine.light"]) do
+			if light.enabled then
+				if #lights < 4 then
+					table.insert(lights, light)
+				else
+					break
+				end
+			end
+		end
+	end
 
 	--stats
 	self.stats.rendering = 0
 
-	--render meshes in material batches
+	--construct render list
 	local batches = {}
 	for _, typename in pairs(renderers) do
 		local list = self.scene.objects[typename]
@@ -113,41 +133,21 @@ function class:render()
 		end
 	end
 
-	--TODO: get closest lights to camera
-	local lights = {}
-	if scene.objects["engine.light"] ~= nil then
-		for k, light in pairs(scene.objects["engine.light"]) do
-			if light.enabled then
-				if #lights < 4 then
-					table.insert(lights, light)
-				else
-					break
-				end
-			end
-		end
-	end
-
 	g.setCanvas(self.buffers)
 	g.clear()
 	g.setDepthMode("lequal", true)
-	g.setMeshCullMode("back")
 
 	local shader, transform
-
-	local properties = {
-		projection = projection,
-		view = view,
-		viewPosition = self.transform.globalPosition:getTable()
-	}
-
 	for material, batch in pairs(batches) do
 		shader = material.shader
 
-		--send all the default variables we need once,
-		--before sending material properties
-		for property, value in pairs(properties) do
-			if shader:hasUniform(property) then
-				shader:send(property, value)
+		--sends all the properties for material
+		material:use()
+
+		--send all the default variables we need once
+		for _, property in pairs(properties) do
+			if shader:hasUniform(property.name) then
+				shader:send(property.name, property.value)
 			end
 		end
 
@@ -162,9 +162,6 @@ function class:render()
 			end
 		end
 
-		--sends all the properties for material
-		material:use()
-
 		--should we send model and modelInverse for this material
 		local model = shader:hasUniform("model")
 		local modelInverse = shader:hasUniform("modelInverse")
@@ -173,11 +170,13 @@ function class:render()
 			transform = renderer.transform
 
 			if model then
-				shader:send("model", transform.matrix)
+				--sends as row major even though matrix is column major due to 11.0 bug
+				shader:send("model", transform.matrix) 
 			end
 
 			if modelInverse then
-				shader:send("modelInverse", transform.matrixInverse)
+				--sends as row major even though matrix is column major due to 11.0 bug
+				shader:send("modelInverse", transform.matrixInverse) 
 			end
 
 			renderer:render(self)
@@ -186,8 +185,10 @@ function class:render()
 		material:reset()
 	end
 
+	g.setColor(1.0, 1.0, 1.0, 1.0)
 	g.setDepthMode()
 	g.setMeshCullMode("none")
+	g.setWireframe(false)
 	g.setShader()
 	g.setCanvas()
 end

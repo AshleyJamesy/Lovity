@@ -20,6 +20,75 @@ function table.merge(src, dst)
 	return dst
 end
 
+local floor = math.floor
+
+function table.binarySearch(array, target, method)
+	local low, high, mid, obj = 1, #array, 0, nil
+
+	if type(method) == "function" then
+		while low <= high do
+			mid = floor((low + high) / 2)
+			obj = array[mid]
+
+			if method(obj) < method(target) then
+				low = mid + 1
+			elseif method(obj) > method(target) then
+				high = mid - 1
+			else
+				return obj, mid
+			end
+		end
+	else
+		while low <= high do
+			mid = floor((low + high) / 2)
+			obj = array[mid]
+
+			if obj < target then
+				low = mid + 1
+			elseif obj > target then
+				high = mid - 1
+			else
+				return obj, mid
+			end
+		end
+	end
+
+	if low == 1 and high == 0 then
+		return nil, 0
+	end
+
+	return nil, mid - (method(obj) > target and 1 or 0)
+end
+
+local weak_mt = {
+	__metatable = "",
+	__mode = "v",
+
+	__index = function(tbl, key)
+		local reference = rawget(tbl, "reference")
+		if reference == nil then
+			error("reference to table no longer exists", 2)
+		end
+
+		return reference[key]
+	end,
+
+	__newindex = function(tbl, key, value)
+		local reference = rawget(tbl, "reference")
+		if reference == nil then
+			error("reference to table no longer exists", 2)
+		end
+
+		reference[key] = value
+	end
+}
+
+function table.reference(tbl)
+	return setmetatable({
+		reference = tbl
+	}, weak_mt)
+end
+
 function table.readOnly(tbl)
 	return setmetatable({}, {
 		__index = tbl,
@@ -32,21 +101,25 @@ end
 
 function table.copy(src)
 	if type(src) == "table" then
-		local tbl = {}
-		setmetatable(tbl, getmetatable(src))
+		local dst = setmetatable({}, getmetatable(src))
 
 		for k, v in pairs(src) do
-			tbl[k] = table.Copy(src[k])
+			dst[k] = table.copy(v)
 		end
 
-		return tbl
+		return dst
 	end
 
 	return src
 end
 
-function table.clone(tbl)
-	return { unpack(tbl) }
+function table.clone(src)
+	local dst = {}
+	for k, v in pairs(src) do
+		dst[k] = v
+	end
+
+	return dst
 end
 
 function table.hasKey(tbl, key)
@@ -92,7 +165,7 @@ function table.tostring(o, i)
 end
 
 function table.dump(o, i, d)
-	local d, i, output 	= d or 1, i or 0, ""
+	local d, i, output = d or 1, i or 0, ""
 
 	if type(o) == "table" then
 		output = "{\n"
