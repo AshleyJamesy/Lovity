@@ -35,7 +35,7 @@ uniform Light lights[NR_POINT_LIGHTS];
         vec2 UV = VaryingTexCoord.xy;
         UV.y = 1.0 - UV.y;
 
-        vec3 lightColour;
+        vec3 lightColour = vec3(0.1f, 0.1f, 0.1f);
         for(int i = 0; i < NR_POINT_LIGHTS; ++i) {
             lightColour += max(dot(Normal, normalize(lights[i].position - FragPos)), 0.0) * lights[i].colour.rgb * (1.0 / length(lights[i].position - FragPos) * lights[i].strength);
         }

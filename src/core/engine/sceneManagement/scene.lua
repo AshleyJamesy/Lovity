@@ -2,8 +2,11 @@ class.name = "engine.sceneManagement.scene"
 
 local allocator, transform, component
 
-local updaters = {}
-local late_updaters = {}
+local component_functions = {
+	update = {},
+	fixed = {},
+	late = {}
+}
 
 function script:onLoad(env, classes)
 	allocator = engine.allocator
@@ -16,11 +19,15 @@ function script:onLoad(env, classes)
 	for _, class in pairs(classes) do
 		if class ~= component and class ~= transform and class:typeof(component:type()) then
 			if type(class.update) == "function" then
-				table.insert(updaters, class:type())
+				table.insert(component_functions.update, class:type())
+			end
+
+			if type(class.fixedupdate) == "function" then
+				table.insert(component_functions.fixed, class:type())
 			end
 
 			if type(class.lateupdate) == "function" then
-				table.insert(late_updaters, class:type())
+				table.insert(component_functions.late, class:type())
 			end
 		end
 	end
@@ -84,6 +91,12 @@ end
 
 local function search(obj)
 	return obj.instanceId
+end
+
+function class:fixedupdate(dt)
+	for _, type in pairs(component_functions.fixed) do
+		self:callFunctionOnType(self.objects, type, "fixedupdate", dt)
+	end
 end
 
 --TODO: remove status, err for build
@@ -165,12 +178,12 @@ function class:update(dt)
 	end
 
 	--all classes with "update" method
-	for _, type in pairs(updaters) do
+	for _, type in pairs(component_functions.update) do
 		self:callFunctionOnType(self.objects, type, "update", dt)
 	end
 
 	--all classes with "lateupdate" method
-	for _, type in pairs(updaters) do
+	for _, type in pairs(component_functions.late) do
 		self:callFunctionOnType(self.objects, type, "lateupdate")
 	end
 

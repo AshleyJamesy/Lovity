@@ -8,5 +8,5 @@ end
 function class:update(dt)
 	self.time = self.time + dt
 
-	self.transform.rotation:setEuler(self.time, self.time, 0)
+	self.transform.rotation:rotate(1, 1, 0, dt)
 end

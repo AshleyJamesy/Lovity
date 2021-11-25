@@ -12,8 +12,6 @@ end
 function class:gameObject()
 	class.base.object(self)
 
-	self.layer = 1
-
 	self.gameObject = self
 	self.components = {}
 
@@ -49,7 +47,9 @@ function class:addComponent(c, ...)
 
 			--store in order of instanceId for quicker reference when removing
 			local obj, index = table.binarySearch(components, instance, search)
-			table.insert(components, index + 1, table.reference(instance))
+
+			--use table reference with weak keys, so if component is deleted, scripts can no longer access it
+			table.insert(components, index + 1, table.reference(instance)) 
 
 			return instance
 		end

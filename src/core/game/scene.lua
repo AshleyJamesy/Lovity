@@ -42,8 +42,9 @@ function class:createTestScene()
 	--CAMERA
 	local gameObject = engine.gameObject()
 	gameObject.transform.position:set(0, 5, 15)
-	gameObject:addComponent(movement)
 	gameObject:addComponent(engine.camera)
+	gameObject:addComponent(movement)
+	local light = gameObject:addComponent(engine.light)
 
 	--FLOOR
 	local gameObject = engine.gameObject()
@@ -107,13 +108,14 @@ function class:createTestScene()
 	mr:addMaterial(materials[2])
 
 	--MESHES AND MATERIALS
-	for k = 1, 250 do
+	for k = 1, 10 do
 		for j, mesh in pairs(meshes) do
 			for i, material in pairs(materials) do
 				local x, y = (i - 1) * 2, (j - 1) * 2
 
 				local gameObject = engine.gameObject()
-				gameObject.transform.position:set(x - ((#materials - 1) * 2) * 0.5, 1 + ((k - 1) * 3), y - ((#meshes - 1) * 2) * 0.5)
+				--gameObject.transform.position:set(x - ((#materials - 1) * 2) * 0.5, 1 + ((k - 1) * 3), y - ((#meshes - 1) * 2) * 0.5)
+				gameObject.transform.position:set(math.random() * 1000 - 500, math.random() * 1000 - 500, math.random() * 1000 - 500)
 				local mr = gameObject:addComponent(engine.meshRenderer, mesh)
 				mr:addMaterial(material)
 			end

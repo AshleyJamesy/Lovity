@@ -169,8 +169,7 @@ function class:lateupdate()
 		end
 	end
 
-	class.mousePosition:set(0,0)
-	class.mouseDelta:set(0,0)
+	class.mouseDelta:set(0, 0)
 	class.mouseWheel:set(0,0)
 end
 

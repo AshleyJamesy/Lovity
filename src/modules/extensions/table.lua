@@ -57,7 +57,11 @@ function table.binarySearch(array, target, method)
 		return nil, 0
 	end
 
-	return nil, mid - (method(obj) > target and 1 or 0)
+	if type(method) == "function" then
+		return nil, mid - (method(obj) > method(target) and 1 or 0)
+	else
+		return nil, mid - (obj > target and 1 or 0)
+	end
 end
 
 local weak_mt = {

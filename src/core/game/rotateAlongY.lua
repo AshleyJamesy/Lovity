@@ -7,5 +7,5 @@ function class:awake()
 end
 
 function class:update(dt)
-	self.transform.rotation.y = self.transform.rotation.y + dt
+	self.transform.rotation:rotate(0, 1, 0, dt)
 end

@@ -673,6 +673,30 @@ function class.translate(a, x, y, z)
 	return a
 end
 
+function class:transform(sx, sy, sz, tx, ty, tz, rx, ry, rz, rw)
+    self[ 1] = (1 - 2 * ry ^ 2 - 2 * rz ^ 2) * sx
+	self[ 2] = (2 * rx * ry - 2 * rz * rw) * sy
+	self[ 3] = (2 * rx * rz + 2 * ry * rw) * sz
+	self[ 4] = tx
+
+	self[ 5] = (2 * rx * ry + 2 * rz * rw) * sx
+	self[ 6] = (1 - 2 * rx ^ 2 - 2 * rz ^ 2) * sy
+	self[ 7] = (2 * ry * rz - 2 * rx * rw) * sz
+	self[ 8] = ty
+
+	self[ 9] = (2 * rx * rz - 2 * ry * rw) * sx
+	self[10] = (2 * ry * rz + 2 * rx * rw) * sy
+	self[11] = (1 - 2 * rx ^ 2 - 2 * ry ^ 2) * sz
+	self[12] = tz
+
+	self[13] = 0.0
+	self[14] = 0.0
+	self[15] = 0.0
+	self[16] = 1.0
+
+    return self
+end
+
 --[[
 - @brief sets the matrix4 to a perspective matrix
 - @param a:`math.matrix`
@@ -727,6 +751,7 @@ function class.perspective(a, fov, aspect, near, far)
 
 	return a
 end
+
 
 --[[
 - @brief inverses the matrix4

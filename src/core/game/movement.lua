@@ -1,6 +1,15 @@
 class.name = "movement"
 class.base = "engine.monoBehaviour"
 
+local mesh, material
+
+function script:onLoad()
+	local sh = engine.shader("assets/shaders/debug.glsl")
+	material = engine.material(sh)
+
+	mesh = engine.mesh("assets/meshes/cube.obj")
+end
+
 function class:awake()
 	
 end
@@ -13,7 +22,7 @@ function class:update(dt)
 	end
 
 	if input:getKey("lshift") then
-		speed = 50.0
+		speed = 100.0
 	elseif input:getKey("lctrl") then
 		speed = 1.0
 	end
@@ -42,7 +51,23 @@ function class:update(dt)
 		self.transform.position = self.transform.position - math.vector3(0, 1, 0) * dt * speed
 	end
 
-	if input:getKeyDown("g") then
-		collectgarbage()
+	if input:getKey("left") then
+		self.transform.rotation:rotate(0, 1, 0, dt)
+	end
+
+	if input:getKey("right") then
+		self.transform.rotation:rotate(0, 1, 0, -dt)
+	end
+
+	if input:getMouseButton(1) then
+		local gameObject = engine.gameObject()
+		gameObject.transform.position:set(math.random() * 1000 - 500, math.random() * 1000 - 500, math.random() * 1000 - 500)
+		local mr = gameObject:addComponent(engine.meshRenderer, mesh)
+		mr:addMaterial(material)
+	end
+
+	local dx, dy = input:getMouseDelta()
+	if math.abs(dx) > 0 then
+		self.transform.rotation:rotate(0, 1, 0, -dt * dx)
 	end
 end

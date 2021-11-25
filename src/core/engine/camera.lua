@@ -72,12 +72,14 @@ function class:camera()
 	end
 end
 
+local a = 0
+
 function class:render()
 	local scene = self.scene
 
 	local projection = self.projection:perspective(self.fov, g.getWidth() / g.getHeight(), math.max(self.nearClip, 0.1),  math.max(self.farClip, 0.1))
 
-	local view = self.transform.matrixInverse
+	local view = self.transform.matrix:inverse()
 	local frustum = self.frustum:calculate(projection, view)
 
 	local properties = {
@@ -87,7 +89,8 @@ function class:render()
 		},
 		{ 
 			name = "view",
-			value = view },
+			value = view
+		},
 		{ 
 			name = "viewPosition",
 			value = self.transform.globalPosition:getTable()
