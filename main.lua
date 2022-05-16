@@ -1,108 +1,110 @@
-class.compile("src/core/", _G) --compiles classes to _G
-
-love.mouse.setRelativeMode(true)
-
-local sceneManager = engine.sceneManagement.sceneManager
-
-function love.load()
-	scene:createTestScene()
+print("mounting started")
+--mounts addons
+for _, folder in pairs(love.filesystem.getDirectoryItems("packages")) do
+	print("mounting package: " .. folder)
+	love.filesystem.mount("packages/" .. folder .. "/src", "src")
 end
 
-function love.fixedupdate(dt)
-end
+local packages = class.load("src")
 
-local DELTAS = {}
-local POINTS = {}
+local env = _G
+for _, pkg in pairs(packages) do
+	local pkgs = {}
 
-for i = 1, 100 do
-	DELTAS[i] = 0.0
-end
-
-function love.fixedupdate(dt)
-	local scene = sceneManager:getActiveScene()
-	scene:fixedupdate(dt)
-end
-
-function love.update(dt)
-	local scene = sceneManager:getActiveScene()
-
-	table.remove(DELTAS, 1)
-	table.insert(DELTAS, love.timer.getFPS())
-
-	scene:update(dt)
-end
-
-function love.render()
-	local scene = sceneManager:getActiveScene()
-	scene:render()
-
-	if engine.camera.main then
-		local canvas = engine.camera.main.buffers[1]
-		local aw, ah = love.graphics.getWidth() / canvas:getWidth(), love.graphics.getHeight() / canvas:getHeight()
-
-		love.graphics.draw(canvas, 0, 0, 0, aw, ah)
+	for word in (pkg.classpath .. "."):gmatch("(.-)" .. "%.") do 
+		table.insert(pkgs, word)
 	end
-	
-	--STATISTICS
-	local stats = {
-		{
-			name = "Memory",
-			value = string.format("%.2f Mb", collectgarbage("count") / (1024))
-		},
-		{
-			name = "VRAM",
-			value = string.format("%.2f Mb", love.graphics.getStats().texturememory / (1024 ^ 2))
-		},
-		{
-			name = "FPS",
-			value = love.timer.getFPS(),
-		},
-		{
-			name = "Delta",
-			value = DELTAS[#DELTAS],
-		},
+
+	local classname = table.remove(pkgs)
+
+	local env = _G
+	for _, pkg_name in pairs(pkgs) do
+		if env[pkg_name] == nil then
+			env[pkg_name] = {}
+		end
+
+		env = env[pkg_name]
+	end
+
+	env[classname] = pkg.class
+end
+
+local shaders = {
+		unlit = lovity.core.engine.shader([[
+			#ifdef VERTEX
+				uniform mat4 uProjection;
+				uniform mat4 uView;
+				uniform mat4 uModel;
+
+				vec4 position(mat4 _, vec4 __) {
+					return uProjection * uView * uModel * VertexPosition;
+				}
+			#endif
+
+			#ifdef PIXEL
+				vec4 effect(vec4 COLOUR, Image TEXTURE, vec2 UV, vec2 SCREEN) {
+					return vec4(1.0, 1.0, 1.0, 1.0);
+				}
+			#endif
+		]])
 	}
 
-	if engine.camera.main then
-		table.insert(stats, {
-			name = "Objects",
-			value = scene.objects["engine.meshRenderer"] ~= nil and #scene.objects["engine.meshRenderer"] or 0,
-		})
+local materials = {
+	unlit = lovity.core.engine.material(shaders.unlit)
+}
 
-		table.insert(stats, {
-			name = "Rendering",
-			value = engine.camera.main.stats.rendering .. " / " .. (scene.objects["engine.meshRenderer"] ~= nil and #scene.objects["engine.meshRenderer"] or 0),
-		})
+function love.load()
+	local scene = lovity.core.engine.sceneManagement.sceneManager:getActiveScene()
+
+	local go = lovity.core.engine.gameObject()
+	go:addComponent(lovity.core.engine.camera)
+	go:addComponent(mypackage.movement)
+end
+
+local j = 0
+
+local cylinder = lovity.core.engine.mesh("assets/models/primitives/cylinder.obj")
+
+function love.update(dt)
+	lovity.core.engine.input:update()
+
+	local scene = lovity.core.engine.sceneManagement.sceneManager:getActiveScene()
+	scene:update(dt)
+
+	lovity.core.engine.input:lateupdate()
+
+	if j < 20000 then
+		for i = 1, 100 do
+			local go = lovity.core.engine.gameObject()
+			go.static = true
+			local mr = go:addComponent(lovity.core.engine.meshRenderer)
+			mr.mesh = cylinder
+			mr:addMaterial(materials.unlit)
+			mr.transform.position:set(math.random() * 1000 - 500, math.random() * 1000 - 500, math.random() * 1000 - 500)
+
+			j = j + 1
+
+			if j < 20000 then
+			else
+				break
+			end
+		end
+	end
+end
+
+function love.draw()
+	local scene = lovity.core.engine.sceneManagement.sceneManager:getActiveScene()
+	scene:draw()
+
+	if lovity.core.engine.camera.main ~= nil then
+		love.graphics.draw(lovity.core.engine.camera.main.buffers[1], 0, love.graphics.getHeight(), 0, 1, -1)
 	end
 
-	local keys, values = "", ""
-	for k, stat in pairs(stats) do
-		keys = keys .. stat.name .. ":\n"
-		values = values .. string.rep("\t", stat.tabs or 5) .. tostring(stat.value) .. "\n"
-	end
-
-	local aspect = (love.graphics.getWidth() / love.graphics.getHeight()) * 0.75
-
-	love.graphics.push()
-	love.graphics.translate(25, 125)
-
-	local points = {}
-	for i = 1, 100 do
-		local j = ((i - 1) * 2) + 1
-
-		points[j + 0] = (i - 1) * 2.5 * aspect
-		points[j + 1] = (1.0 - math.min((DELTAS[i] / 144), 1.0)) * 100 * aspect
-	end
-
-	love.graphics.setColor(0.5, 0.5, 0.5, 1.0)
-	love.graphics.rectangle("fill", 0, 0, 100 * 2.5 * aspect, 100 * aspect)
-	love.graphics.setColor(1.0, 0.0, 0.0, 0.5)
-	love.graphics.line(0, 50 * aspect, 100 * 2.5 * aspect, 50 * aspect)
-	love.graphics.setColor(1.0, 1.0, 1.0, 1.0)
-	love.graphics.line(points)
-
-	love.graphics.pop()
-
-	love.graphics.print(keys, 25, 25)
-	love.graphics.print(values, 25, 25)
+	love.graphics.print("Memory:\nVRAM:\nFPS:\nObjects:\nRendering:", 25, 25)
+	love.graphics.print(
+		string.format("%.2f Mb", collectgarbage("count") / (1024)) .. "\n" .. 
+		string.format("%.2f Mb", love.graphics.getStats().texturememory / (1024 ^ 2)) .. "\n" .. 
+		love.timer.getFPS() .. "\n" ..
+		(scene.objects["lovity.core.engine.meshRenderer"] ~= nil and #scene.objects["lovity.core.engine.meshRenderer"] or 0) .. "\n" ..
+		(lovity.core.engine.camera.main.stats.rendering .. " / " .. (scene.objects["lovity.core.engine.meshRenderer"] ~= nil and #scene.objects["lovity.core.engine.meshRenderer"] or 0)), 100, 25)
 end
